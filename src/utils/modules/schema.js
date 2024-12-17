@@ -62,7 +62,7 @@ export function parseBody(body, schema) {
   const newSchema = JSON.parse(JSON.stringify(schema));
 
   if (schema.oneOf || schema.anyOf || schema.allOf) {
-    const keyword = Object.keys(schema)[0];
+    const keyword = Object.keys(schema).find((key) => ['allOf', 'anyOf', 'oneOf'].includes(key));
     newSchema[keyword] = schema[keyword].map((sch) => parseSchema(sch, scope));
   } else if (schema.not) {
     newSchema.not = parseSchema(schema.not, scope);

@@ -3,6 +3,7 @@
     content:
       application/json:
         schema:
+          description: "description here"
           oneOf:
             - $ref: './schemas.yaml#/oasParamsResponse'
             - $ref: './schemas.yaml#/stringResponse'
