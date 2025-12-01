@@ -56,8 +56,12 @@ export function handle(errorClass, message, strict = false) {
  * @param {String} name - Name of the file
  */
 export function filePath(path, name) {
-  const matches = fs.readdirSync(path).filter((file) => file.includes(name));
-  if(matches.length > 0) {
-    return `${path}/${matches[0]}`;
+  const match = fs.readdirSync(path).find((file) => {
+    const baseName = file.replace(/\.(js|ts)$/, '');
+    return baseName === name;
+  });
+
+  if(match) {
+    return `${path}/${match}`;
   }
 }
