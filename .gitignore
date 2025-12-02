@@ -136,3 +136,5 @@ dist
 .idea/*
 
 # End of https://www.toptal.com/developers/gitignore/api/node,vscode,grunt
+
+.npmrc
