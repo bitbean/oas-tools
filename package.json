@@ -14,6 +14,10 @@
   "engines": {
     "node": ">=14.0.0"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "scripts": {
     "lint": "eslint src --ext .mjs --ext .js --ext .cjs",
     "format": "npm run lint -- --fix",
