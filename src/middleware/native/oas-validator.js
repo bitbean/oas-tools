@@ -38,7 +38,7 @@ export class OASRequestValidator extends OASBase {
           const {validate, valid} = validator.validate(body, schema, oasFile.openapi);
   
           if (!valid) {
-            commons.handle(RequestValidationError, `Request body does not match the schema specified in the OAS Document:\n${validate.errors.map((e) => `- Validation failed at ${e.schemaPath} > ${e.message}`).join("\n")}`, config.strict);
+            commons.handle(RequestValidationError, `Request body does not match the schema specified in the OAS Document:\n${validate.errors.map((e) => `- Validation failed at ${e.schemaPath} > ${e.message}${getDetailFromError(e)}`).join("\n")}`, config.strict);
           }
         } else {
           commons.handle(RequestValidationError, "Missing request body declaration in OAS Document", config.strict);
@@ -73,7 +73,7 @@ export class OASRequestValidator extends OASBase {
             const {validate, valid} = validator.validate(value, schema, oasFile.openapi);
 
             if (!valid) {
-              commons.handle(RequestValidationError, `Parameter ${param.name} does not match the schema specified in the OAS Document:\n${validate.errors.map((e) => `- Validation failed at ${e.schemaPath} > ${e.message}`).join("\n")}`, config.strict);
+              commons.handle(RequestValidationError, `Parameter ${param.name} does not match the schema specified in the OAS Document:\n${validate.errors.map((e) => `- Validation failed at ${e.schemaPath} > ${e.message}${getDetailFromError(e)}`).join("\n")}`, config.strict);
             }
 
           } else if (param.required) {
@@ -125,7 +125,7 @@ export class OASResponseValidator extends OASBase {
             const {validate, valid} = validator.validate(parsedData, schema, oasFile.openapi);
 
             if (!valid) {
-              commons.handle(ResponseValidationError, `Wrong data in response.\n${validate.errors.map((e) => `- Validation failed at ${e.schemaPath} > ${e.message}`).join("\n")}`, config.strict);
+              commons.handle(ResponseValidationError, `Wrong data in response.\n${validate.errors.map((e) => `- Validation failed at ${e.schemaPath} > ${e.message}${getDetailFromError(e)}`).join("\n")}`, config.strict);
             } 
           }
         } else {
@@ -137,4 +137,33 @@ export class OASResponseValidator extends OASBase {
     });
   }
     
+}
+
+const getDetailFromError = (e) => {
+  const params = e.params || {};
+  if('additionalProperty' in params) {
+    return `, '${params.additionalProperty}' does not belong`
+  }
+  if('allowedValues' in params && Array.isArray(params.allowedValues)) {
+    // Use 'en' locale for English
+    const listFormatter = new Intl.ListFormat('en', { 
+      style: 'long', 
+      type: 'conjunction' // Use 'and'
+    });
+
+    return `. Options are limited to ${listFormatter.format(params.allowedValues)}`
+  }
+  if('missingProperty' in params || 'type' in params) {
+    // message already is similar to below:
+    // `must have required property '${missingProperty}'
+    // `must be ${type]}`
+  } else {
+  // What else can params include?
+  // console.log(v,
+  //   validate.errors.map(e => Object.keys(e.params)),
+  //     validate.errors.map(e => e.params))  
+  console.error('oas-validator error data:',e)
+}
+
+  return '';
 }
