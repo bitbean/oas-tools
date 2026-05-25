@@ -151,9 +151,11 @@ const getDetailFromError = (e) => {
       type: 'conjunction' // Use 'and'
     });
 
-    const cleanedListItems = params.allowedValues.map(value => 
-      value === null ? "'null'" : value === undefined ? "'undefined'" : value
-    )
+    const cleanedListItems = params.allowedValues.map((value) => {
+      if (value === null) return "'null'";
+      if (value === undefined) return "'undefined'";
+      return value;
+    });
 
     return `. Options are limited to ${listFormatter.format(cleanedListItems)}`
   }
