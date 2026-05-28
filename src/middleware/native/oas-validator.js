@@ -151,7 +151,13 @@ const getDetailFromError = (e) => {
       type: 'conjunction' // Use 'and'
     });
 
-    return `. Options are limited to ${listFormatter.format(params.allowedValues)}`
+    const cleanedListItems = params.allowedValues.map((value) => {
+      if (value === null) return "'null'";
+      if (value === undefined) return "'undefined'";
+      return value;
+    });
+
+    return `. Options are limited to ${listFormatter.format(cleanedListItems)}`
   }
   if('missingProperty' in params || 'type' in params) {
     // message already is similar to below:
